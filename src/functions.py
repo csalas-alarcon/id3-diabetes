@@ -157,7 +157,7 @@ class DecisionTreeClassifier:
         
         return node 
 
-        def printTree(self):
+    def printTree(self):
             if not self.node:
                 return 
             nodes= deque()
