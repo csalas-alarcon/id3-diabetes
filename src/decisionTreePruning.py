@@ -25,17 +25,15 @@ class DecisionTree():
 
     def __init__(self, database: pd.DataFrame, min_samples: int= 50):
         # Information
-        self.data= np.array(database.drop(FEATURE_COLS, axis=1).copy()) # Where the features are
+        self.data= np.array(database[FEATURE_COLS].copy()) # Where the features are
         self.results= np.array(database[LABEL_COLS].copy()) # Where the labels are
         self.length= np.shape(self.results)[0] # Initial Length
-        self.min_samples= 50
+        self.min_samples= min_samples
 
         # Node Declaration
         self.node= None
 
-        self.entropy= self._get_entropy() #There must be a better way
-
-    def _calculate_entropy(self, indices: list, value: str= None) -> float:
+    def _calculate_entropy(self, indices: list= None, value: str= None) -> float:
  
         if indices: # Filter by Indices
             newdata= self.data[indices]
@@ -64,17 +62,17 @@ class DecisionTree():
         ])
 
 
-    def _info_gain(self, indices: list[int], feature: int) -> double:
-        initial_entropy= _calculate_entropy(indices) # Calculate initial entropy with the given indices (total)
+    def _info_gain(self, indices: list[int], feature: int) -> float:
+        initial_entropy= self._calculate_entropy(indices) # Calculate initial entropy with the given indices (total)
         data= self.data[indices] # We filter by the indices
 
         # Get Patterns
-        uniques, counts= np.unique(data[feature], return_counts=True)
+        uniques, counts= np.unique(data[:, feature], return_counts=True)
         feature_frequencies= dict(zip(uniques, counts))
 
         # Info-gain Formula
         return initial_entropy - sum([
-            value_freq/ self.length* self._get_entropy(indices, value)
+            value_freq/ self.length* self._calculate_entropy(indices, value)
             for value, value_freq in feature_frequencies.items()
         ])
 
@@ -101,7 +99,7 @@ class DecisionTree():
         # If Pure Node -> return
         values, counts= np.unique(newresults, return_counts= True)
         if len(values) == 1:
-            node.value = newresults[0]
+            node.value = values[0]
             return node
         
         # If not else to question -> return
@@ -116,13 +114,6 @@ class DecisionTree():
         node.childs= []
 
         # We get the unique values of that feature
-        feature_values = list(set(
-                [self.data[i][best_col]
-                 for i in indices
-                 ]))
-
-
-        # PRE-PODA: mínimo número de ejemplos por hoja
         feature_values = set(self.data[i][best_col] for i in indices)
 
         for value in feature_values:
@@ -131,7 +122,7 @@ class DecisionTree():
                 if self.data[i][best_col] == value
             ]
 
-            if len(child_indices) < self.min_samples_leaf:
+            if len(child_indices) < self.min_samples:
                 # No se permite la división
                 values, counts = np.unique(newresults, return_counts=True)
                 node.value = values[np.argmax(counts)]
@@ -155,10 +146,11 @@ class DecisionTree():
             # We create a "Normal Decision Node"
             # Remove the chosen feature
             if features and best_col in features:
-                to_remove = features.index(best_col)
-                features.pop(to_remove)
+                myfeatures= features.copy()
+                to_remove = myfeatures.index(best_col)
+                myfeatures.pop(to_remove)
             # recursively call the algorithm to train it
-            child.next = self.entrenamiento(childs_indices, features, child.next)
+            child.next = self.entrenamiento(childs_indices, myfeatures, child.next)
         return node
     
     def run(self):
@@ -166,7 +158,7 @@ class DecisionTree():
 
         :return: None
         """
-        self.node = self.entrenamiento(None, FEATURE_DICT.keys(), self.node)
+        self.node = self.entrenamiento(None, list(FEATURE_DICT.keys()), self.node)
         
         tree_dict= node_to_dict(self.node)
 
