@@ -65,3 +65,37 @@ def dict_to_node(d: dict):
         n.childs.append(c)
     
     return n
+
+
+CONTINUOUS_COLS = [
+    "age",
+    "alcohol_consumption_per_week",
+    "physical_activity_minutes_per_week",
+    "diet_score",
+    "sleep_hours_per_day",
+    "screen_time_hours_per_day",
+    "bmi",
+    "waist_to_hip_ratio",
+    "systolic_bp",
+    "diastolic_bp",
+    "heart_rate",
+    "cholesterol_total",
+    "hdl_cholesterol",
+    "ldl_cholesterol",
+    "triglycerides",
+    "glucose_fasting",
+    "glucose_postprandial",
+    "insulin_level",
+    "hba1c"
+]
+
+
+def discretize_dataframe(df, columns, n_bins=5):
+    df = df.copy()
+    for col in columns:
+        df[col] = pd.qcut(
+            df[col],
+            q=n_bins,
+            duplicates="drop"
+        ).astype(str)
+    return df

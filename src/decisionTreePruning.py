@@ -95,17 +95,10 @@ class DecisionTree():
         # Filter our data scope
         newdata= self.data[indices]
         newresults= self.results[indices]
-
-        # If Pure Node -> return
-        values, counts= np.unique(newresults, return_counts= True)
-        if len(values) == 1:
-            node.value = values[0]
-            return node
         
         # If not else to question -> return
         if len(features) == 0:
-            values, counts = np.unique(newresults, return_counts=True)
-            node.value = values[np.argmax(counts)]
+            node.value = float(np.mean(newresults.astype(np.float64)))
             return node
 
         # We choose the best feature
@@ -124,8 +117,7 @@ class DecisionTree():
 
             if len(child_indices) < self.min_samples:
                 # No se permite la división
-                values, counts = np.unique(newresults, return_counts=True)
-                node.value = values[np.argmax(counts)]
+                node.value = np.mean(newresults.astype(np.float64))
 
                 return node
 
@@ -158,7 +150,7 @@ class DecisionTree():
 
         :return: None
         """
-        self.node = self.entrenamiento(None, list(FEATURE_DICT.keys()), self.node)
+        self.node = self.entrenamiento(None, list(FEATURE_DICT), self.node)
         
         tree_dict= node_to_dict(self.node)
 
