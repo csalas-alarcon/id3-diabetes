@@ -1,16 +1,22 @@
-import itertools
 import pandas as pd
+import itertools
 from sklearn.metrics import mean_squared_error, root_mean_squared_error
-from dataWork import dict_to_node
+from etl import dict_to_node
 
-class engine():
-    SIZE= 100000
+class Engine():
 
-    def __init__(self, data: pd.DataFrame, pnode: Node):
+    def __init__(self, data: pd.DataFrame):
         self.data= data 
-        self.pnode= pnode 
+        self.pnode= self._get_model()
 
-    def traverse(data: pd.Series, tree: Node) -> float:
+    def _get_model() -> Node:
+        with open("../results/decision_tree.json") as f:
+            tree_dict= json.load(f)
+
+        pnode= dict_to_node(tree_dict)
+        return pnode
+
+    def _traverse(data: pd.Series, tree: Node) -> float:
         # Leaf node
         if tree.childs is None and tree.next is None:
             return tree.value
@@ -20,33 +26,29 @@ class engine():
         value= data[col]
         for child in node.childs: # Branch Node
             if child.value== value:
-                traverse(data, child.next) # Next decision node
+                return self._traverse(data, child.next) # Next decision node
 
-    def get_results(portion: float) -> Union(list[float], int):
-        # Check its valid
-        if portion <= 0 or portion > 1:
-            return 0
-
-        results= []
-        number= trunc(SIZE* portion)
-        for _, row in self.data[:number].iterrows():
-            res= traverse(row, self.pnode)
+    def _get_results() -> list[float]:
+        for _, row in self.data.iterrows():
+            res= self._traverse(row, self.pnode)
             results.append(res)
         
-        return (results, number)
+        return results
 
-    def validation(results: list[float], length) -> Union(float, float, int):
+    def _validation(results: list[float]) -> Union(float, float, int):
         labels= self.data["diabetes_risk_score"].tolist()
         mse= mean_squared_error(labels, results)
         rmse= root_mean_squared_error(labels, results)
 
+        length= len(results)
+
         return (mse, rmse, length)
 
-def main():
-    with open("decision_tree.json") as f:
-        tree_dict= json.load(f)
+    def run() -> Union(float, float, int):
+        prediction= _get_results()
+        mse, rmse, length= _validation(prediction)
 
-    pnode= dict_to_node(tree_dict)
+        return (mse, rmse, length)
 
 
 

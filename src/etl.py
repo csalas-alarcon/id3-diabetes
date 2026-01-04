@@ -23,7 +23,19 @@ CONTINUOUS_COLS = [
     "hba1c"
 ]
 
-def discretize_dataframe(df: pd.DataFrame, columns: list[str], n_bins: int=5):
+SIZE= 100000
+
+# Load the model
+def load(n_rows: int) -> Union(pd.DataFrame, pd.DataFrame):
+    df= pd.read_csv("../data/diabetes.csv")
+
+    training= df.iloc[:n_rows]
+    validation= df.iloc[n_rows:]
+
+    return (training, validation)
+
+
+def categorize(df: pd.DataFrame, columns: list[str]= CONTINUOUS_COLS, n_bins: int=5):
     df = df.copy()
     for col in columns:
         df[col] = pd.qcut(

@@ -126,7 +126,7 @@ class DecisionTree():
             # If no instances -> return most probable outcome
             if not childs_indices:
                 values, counts = np.unique(newresults, return_counts=True)
-                child.next = values[np.argmax(counts)]
+                child.value = values[np.argmax(counts)]
             
             # We create a "Normal Decision Node"
             else:
@@ -149,7 +149,7 @@ class DecisionTree():
         # We make it a Dictionary
         tree_dict= node_to_dict(self.node)
         # Convert it to JSON
-        with open("decision_tree.json", w) as f:
+        with open("../results/decision_tree.json", w) as f:
             json.dump(tree_dict, f, indent=2)
 
 class DecisionTreePruning(DecisionTree):
@@ -188,7 +188,6 @@ class DecisionTreePruning(DecisionTree):
                 node.value = np.mean(newresults.astype(np.float64))
 
                 return node
-
 
         # Create a Child per different value
         for value in feature_values:
