@@ -1,10 +1,10 @@
 import pandas as pd 
 import numpy as np 
 import typing
-
 import math
 
-from dataWork import node_to_dict, dict_to_node
+from dataWork import node_to_dict
+from node import Node
 
 # NOTA MENTAL -> Pasar a numpy f64 todos los decimales que pueda
 
@@ -13,12 +13,6 @@ FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","empl
 FEATURE_DICT= dict(enumerate(FEATURE_COLS))
 LABEL_COLS= ["diabetes_risk_score"]
 
-# Node
-class Node():
-    def __init__(self):
-        self.value = None
-        self.next = None
-        self.childs = None
 
 # Decision Tree
 class DecisionTree():
@@ -33,7 +27,6 @@ class DecisionTree():
         self.node= None
 
     def _calculate_entropy(self, indices: list= None, value: str= None) -> float:
- 
         if indices: # Filter by Indices
             newdata= self.data[indices]
             newresults= self.results[indices]
@@ -76,7 +69,6 @@ class DecisionTree():
         ])
 
     def _get_max_info(self, indices: list[int], features: list[int]) -> Union(str, int):
-
         # We calculate the gain-per-feature
         gain_per_feature= [self._info_gain(indices, feature_col) for feature_col in features]
 
@@ -152,12 +144,74 @@ class DecisionTree():
 
         :return: None
         """
+        # We train it
         self.node = self.entrenamiento(None, list(FEATURE_DICT.keys()), self.node)
-        
+        # We make it a Dictionary
         tree_dict= node_to_dict(self.node)
-
+        # Convert it to JSON
         with open("decision_tree.json", w) as f:
             json.dump(tree_dict, f, indent=2)
+
+class DecisionTreePruning(DecisionTree):
+
+    def _entrenamiento(self, indices: list[int], features: list[int], node: Node) -> Node:
+        # Create indices if not passed as an argument
+        indices= [i for i in range(len(self.results))] if not indices else indices
+        # Initialize node if not instanced
+        node= Node() if node==None else ...
+
+        # Filter our data scope
+        newdata= self.data[indices]
+        newresults= self.results[indices]
+        
+        # If not else to question -> return
+        if len(features) == 0:
+            node.value = float(np.mean(newresults.astype(np.float64)))
+            return node
+
+        # We choose the best feature
+        best_name, best_col= self._get_max_info(indices, features)
+        node.value= best_name
+        node.childs= []
+
+        # We get the unique values of that feature
+        feature_values = set(self.data[i][best_col] for i in indices)
+
+        for value in feature_values:
+            child_indices = [
+                i for i in indices
+                if self.data[i][best_col] == value
+            ]
+
+            if len(child_indices) < self.min_samples:
+                # No se permite la división
+                node.value = np.mean(newresults.astype(np.float64))
+
+                return node
+
+
+        # Create a Child per different value
+        for value in feature_values:
+            child = Node()
+            child.value = value  # add a branch from the node to each feature value in our feature
+            node.childs.append(child)  # append new child node to current node
+            
+            # We give the child the indices only with its value
+            childs_indices = [
+                i 
+                for i in indices 
+                if self.data[i][best_col] == value
+                ]
+            
+            # We create a "Normal Decision Node"
+            # Remove the chosen feature
+            if features and best_col in features:
+                myfeatures= features.copy()
+                to_remove = myfeatures.index(best_col)
+                myfeatures.pop(to_remove)
+            # recursively call the algorithm to train it
+            child.next = self.entrenamiento(childs_indices, myfeatures, child.next)
+        return node
 
 
                  

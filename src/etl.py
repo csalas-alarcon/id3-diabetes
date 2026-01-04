@@ -1,15 +1,37 @@
-import polars as pl 
-import time
+import pandas as pd
 import typing
+ 
+CONTINUOUS_COLS = [
+    "age",
+    "alcohol_consumption_per_week",
+    "physical_activity_minutes_per_week",
+    "diet_score",
+    "sleep_hours_per_day",
+    "screen_time_hours_per_day",
+    "bmi",
+    "waist_to_hip_ratio",
+    "systolic_bp",
+    "diastolic_bp",
+    "heart_rate",
+    "cholesterol_total",
+    "hdl_cholesterol",
+    "ldl_cholesterol",
+    "triglycerides",
+    "glucose_fasting",
+    "glucose_postprandial",
+    "insulin_level",
+    "hba1c"
+]
 
-def leer() -> pl.DataFrame:
-    q= pl.scan_csv("../data/diabetes.csv")
-    df= q.collect()
+def discretize_dataframe(df: pd.DataFrame, columns: list[str], n_bins: int=5):
+    df = df.copy()
+    for col in columns:
+        df[col] = pd.qcut(
+            df[col],
+            q=n_bins,
+            duplicates="drop"
+        ).astype(str)
     return df
-
-def guardar_modelo(df: pl.DataFrame) -> None:
-    id= time.time()
-    df.write_json(f"../results/modelo{id}")
 
 def node_to_dict(node):
     if node is None:
@@ -67,35 +89,4 @@ def dict_to_node(d: dict):
     return n
 
 
-CONTINUOUS_COLS = [
-    "age",
-    "alcohol_consumption_per_week",
-    "physical_activity_minutes_per_week",
-    "diet_score",
-    "sleep_hours_per_day",
-    "screen_time_hours_per_day",
-    "bmi",
-    "waist_to_hip_ratio",
-    "systolic_bp",
-    "diastolic_bp",
-    "heart_rate",
-    "cholesterol_total",
-    "hdl_cholesterol",
-    "ldl_cholesterol",
-    "triglycerides",
-    "glucose_fasting",
-    "glucose_postprandial",
-    "insulin_level",
-    "hba1c"
-]
 
-
-def discretize_dataframe(df, columns, n_bins=5):
-    df = df.copy()
-    for col in columns:
-        df[col] = pd.qcut(
-            df[col],
-            q=n_bins,
-            duplicates="drop"
-        ).astype(str)
-    return df
