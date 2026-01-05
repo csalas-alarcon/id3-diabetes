@@ -24,7 +24,7 @@ class DecisionTree():
         self.data= np.array(database[FEATURE_COLS].copy()) # Where the features are
         self.results= np.array(database[LABEL_COLS].copy()) # Where the labels are
         self.length= np.shape(self.results)[0] # Initial Length
-        self.min_samples= 50
+        self.min_samples= 2
 
         # Node Declaration
         self.node= None
@@ -80,7 +80,7 @@ class DecisionTree():
         max_feature = gain_per_feature.index(max(gain_per_feature))
         best_col= features[max_feature]
 
-        return (FEATURE_DICT[max_feature], best_col)
+        return (FEATURE_DICT[best_col], best_col)
 
     def _entrenamiento(self, indices: list[int], features: list[int], node: Node) -> Node:
         # Create indices if not passed as an argument
@@ -195,7 +195,7 @@ class DecisionTreePruning(DecisionTree):
 
             if len(child_indices) < self.min_samples:
                 # No se permite la división
-                node.value = np.mean(newresults.astype(np.float64))
+                node.value = float(np.mean(newresults.astype(np.float64)))
                 node.childs = None
                 node.next = None
 

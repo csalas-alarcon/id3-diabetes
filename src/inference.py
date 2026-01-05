@@ -6,6 +6,8 @@ from sklearn.metrics import mean_squared_error, root_mean_squared_error
 from etl import dict_to_node
 from node import Node
 
+from collections import Counter
+
 class Engine():
 
     def __init__(self, data: pd.DataFrame):
@@ -31,21 +33,25 @@ class Engine():
         print("==================")
 
         # If it only has value -> Leaf
-        print(f"NODE: {tree}. VALUE: {tree.value}, NEXT: {tree.next}, CHILDREN: {tree.childs}")
+        print(f"NODE: {tree}. VALUE: {tree.value}, NEXT: {tree.next}, CHILDREN: {[child.value for child in tree.childs] if tree.childs else 0}")
         if tree.childs is None and tree.next is None:
             return tree.value
         
         # If it does not have next -> Decision
         if tree.childs is not None:
-            for child in tree.childs:
-                if str(child.value)==str(data[tree.value]):
-                    return self._traverse(data, child)
+            try:
+                for child in tree.childs:
+                    if str(child.value)==str(data[tree.value]):
+                        return self._traverse(data, child)
+            except Exception:
+                return self._traverse(data, random.choice(tree.childs))
 
         # If it doesn't have childs -> Branch
         if tree.next is not None:
             return self._traverse(data, tree.next)
 
         else:
+            return 30.0
             print("GRAVÍSIMO ERROR; NO ENTRO EN NINGUNA CATEGORIA TRAVERSE")
 
     def _get_results(self) -> list[float]:
@@ -58,7 +64,12 @@ class Engine():
 
     def _validation(self, results: list[float]) -> tuple[float, float, int]:
         print("__________________________________")
+        print("EPPEPEPEPEPEPEPEPEPEPEPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPP")
+        print(results.count('None'))
         print(results)
+        print("-------------------------")
+        print(sum(x is not None for x in results))
+        print(len(results))
         labels= self.data["diabetes_risk_score"].tolist()
         mse= mean_squared_error(labels, results)
         rmse= root_mean_squared_error(labels, results)
@@ -73,6 +84,3 @@ class Engine():
 
         return (mse, rmse, length)
 
-
-
-    
