@@ -36,6 +36,8 @@ def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
 
     df= pd.read_csv(file)
 
+    df= categorize(df)
+
     training= df.iloc[:n_rows]
     validation= df.iloc[n_rows:]
 
@@ -51,60 +53,56 @@ def categorize(df: pd.DataFrame, columns: list[str]= CONTINUOUS_COLS, n_bins: in
         ).astype(str)
     return df
 
-def node_to_dict(node):
+def node_to_dict(node: Node) -> dict:
     if node is None:
         return None
 
-    # Leaf node
+    # If only value -> Leaf Node
     if node.childs is None and node.next is None:
         return {
             "type": "leaf",
             "value": node.value
         }
-
-    # Branch node
-    if node.childs is None and node.next is not None:
+    # If no next -> Decision
+    if node.next is None:
+        return {
+            "type": "decision",
+            "column": node.value,
+            "children": [
+                node_to_dict(child)
+                for child in node.childs
+            ]
+        }
+    # If no children -> Branch
+    if node.childs is None:
         return {
             "type": "branch",
             "value": node.value,
             "next": node_to_dict(node.next)
         }
     
-    # Decision node (feature -> Children)
-    return {
-        "type": "decision",
-        "value": node.value,
-        "children": [
-            {
-                "value": child.value,
-                "next": node_to_dict(child.next)
-            }
-            for child in node.childs
-        ]
-    }
+    else:
+        print("GRAVÍSIMO ERROR; NO ENTRO EN NINGUNA CATEGORIA NODE TO DICT")
 
-def dict_to_node(d: dict):
+def dict_to_node(d: dict) -> Node:
+    # instance a Node
+    n= Node()
+
     if d["type"]== "leaf":
-        n= Node()
         n.value= d["value"]
         return n 
 
+    if d["type"]== "decision":
+        n.value= d["column"]
+        n.childs= [dict_to_node(child) for child in d["children"]]
+        return n 
+
     if d["type"]== "branch":
-        n= Node()
         n.value= d["value"]
         n.next= dict_to_node(d["next"])
         return n 
 
-    n= Node()
-    n.value= d["feature"]
-    n.childs= []
-    for child in d["children"]:
-        c= Node()
-        c.value= child["value"]
-        c.next= dict_to_node(child["next"])
-        n.childs.append(c)
-    
-    return n
-
+    else:
+        print("GRAVÍSIMO ERROR; NO ENTRO EN NINGUNA CATEGORIA DICTO_TO_NODE")
 
 

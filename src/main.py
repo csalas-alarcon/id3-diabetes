@@ -46,8 +46,8 @@ def main():
     # Read it and Load it
     training, validation= load(n_rows)
     # We categorize continous Property
-    training= categorize(training)
-    validation= categorize(validation)
+    #training= categorize(training)
+    #validation= categorize(validation)
     # We instance the Decision Tree
     model= DecisionTree(training) if kind=='A' else DecisionTreePruning(training)
     # We train it and store the model

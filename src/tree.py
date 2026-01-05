@@ -181,7 +181,6 @@ class DecisionTreePruning(DecisionTree):
         # We choose the best feature
         best_name, best_col= self._get_max_info(indices, features)
         node.value= best_name
-        node.childs= []
         print(f"BEST ONE IS {best_name} with bestcol: {best_col}")
 
 
@@ -201,7 +200,7 @@ class DecisionTreePruning(DecisionTree):
                 node.next = None
 
                 return node
-
+        node.childs= []
         # Create a Child per different value
         for value in feature_values:
             child = Node()

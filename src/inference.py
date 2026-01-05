@@ -24,19 +24,29 @@ class Engine():
         return pnode
 
     def _traverse(self, data: pd.Series, tree: Node) -> float:
-        # Leaf node
+        print("=== DATA TRACE ===")
+        print(f"data.index: {list(data.index)}")
+        print(f"data.values: {list(data.values)}")
+        print(f"tree.value: {tree.value}")
+        print("==================")
+
+        # If it only has value -> Leaf
+        print(f"NODE: {tree}. VALUE: {tree.value}, NEXT: {tree.next}, CHILDREN: {tree.childs}")
         if tree.childs is None and tree.next is None:
             return tree.value
+        
+        # If it does not have next -> Decision
+        if tree.childs is not None:
+            for child in tree.childs:
+                if str(child.value)==str(data[tree.value]):
+                    return self._traverse(data, child)
 
-        # Decision Node
-        col= tree.value 
-        value= data[col]
+        # If it doesn't have childs -> Branch
+        if tree.next is not None:
+            return self._traverse(data, tree.next)
 
-        for child in tree.childs: # Branch Node
-            if child.value== value:
-                return self._traverse(data, child.next) # Next decision node
-
-        return tree.value
+        else:
+            print("GRAVÍSIMO ERROR; NO ENTRO EN NINGUNA CATEGORIA TRAVERSE")
 
     def _get_results(self) -> list[float]:
         results: list[float]= []
@@ -47,6 +57,8 @@ class Engine():
         return results
 
     def _validation(self, results: list[float]) -> tuple[float, float, int]:
+        print("__________________________________")
+        print(results)
         labels= self.data["diabetes_risk_score"].tolist()
         mse= mean_squared_error(labels, results)
         rmse= root_mean_squared_error(labels, results)
