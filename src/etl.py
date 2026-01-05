@@ -1,5 +1,8 @@
 import pandas as pd
+import os
 import typing
+
+from node import Node
  
 CONTINUOUS_COLS = [
     "age",
@@ -26,14 +29,17 @@ CONTINUOUS_COLS = [
 SIZE= 100000
 
 # Load the model
-def load(n_rows: int) -> Union(pd.DataFrame, pd.DataFrame):
-    df= pd.read_csv("../data/diabetes.csv")
+def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+
+    dirname = os.path.dirname(__file__)
+    file = os.path.join(dirname, '../data/diabetes.csv')
+
+    df= pd.read_csv(file)
 
     training= df.iloc[:n_rows]
     validation= df.iloc[n_rows:]
 
     return (training, validation)
-
 
 def categorize(df: pd.DataFrame, columns: list[str]= CONTINUOUS_COLS, n_bins: int=5):
     df = df.copy()
@@ -67,7 +73,7 @@ def node_to_dict(node):
     # Decision node (feature -> Children)
     return {
         "type": "decision",
-        "feature": node.value,
+        "value": node.value,
         "children": [
             {
                 "value": child.value,

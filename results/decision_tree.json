@@ -1,0 +1,579 @@
+{
+    "type": "decision",
+    "feature": "age",
+    "children": [
+        {
+            "value": "(17.999, 36.0]",
+            "next": {
+                "type": "decision",
+                "feature": "alcohol_consumption_per_week",
+                "children": [
+                    {
+                        "value": "(120.0, 178.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 22.224358974358974,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(83.0, 120.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 24.44918699186992,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(-0.001, 48.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "glucose_fasting",
+                            "children": [
+                                {
+                                    "value": "(1.999, 4.04]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 26.157692307692308,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(7.17, 10.004]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 30.59245283018868,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(13.222, 26.24]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 26.6,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(4.04, 7.17]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 26.47368421052632,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(10.004, 13.222]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 27.84666666666666,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "value": "(178.0, 634.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 19.178947368421053,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(48.0, 83.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 25.42110726643599,
+                            "children": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "value": "(46.0, 54.0]",
+            "next": {
+                "type": "decision",
+                "feature": "alcohol_consumption_per_week",
+                "children": [
+                    {
+                        "value": "(83.0, 120.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "hypertension_history",
+                            "children": [
+                                {
+                                    "value": "(22.5, 24.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 29.635000000000005,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(24.6, 26.4]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 29.444999999999997,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(28.6, 38.2]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 34.093650793650795,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(26.4, 28.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 31.57058823529412,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(14.999, 22.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 26.869811320754714,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "value": "(120.0, 178.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 29.165925925925926,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(-0.001, 48.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 33.67573529411764,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(178.0, 634.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 24.784172661870503,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(48.0, 83.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 32.65963636363636,
+                            "children": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "value": "(36.0, 46.0]",
+            "next": {
+                "type": "decision",
+                "feature": "alcohol_consumption_per_week",
+                "children": [
+                    {
+                        "value": "(120.0, 178.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "alcohol_consumption_per_week",
+                            "children": [
+                                {
+                                    "value": "(5.5, 6.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 26.131944444444443,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(4.5, 5.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 28.438000000000002,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(-0.001, 4.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 28.87121212121212,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(6.5, 7.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 26.760377358490565,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(7.5, 10.0]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 22.276923076923076,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "value": "(83.0, 120.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "hypertension_history",
+                            "children": [
+                                {
+                                    "value": "(22.5, 24.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 27.84181818181818,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(24.6, 26.4]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 28.799999999999994,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(28.6, 38.2]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 31.423214285714284,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(26.4, 28.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 30.89814814814815,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(14.999, 22.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 23.473333333333336,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "value": "(-0.001, 48.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "hypertension_history",
+                            "children": [
+                                {
+                                    "value": "(22.5, 24.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 29.664285714285715,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(24.6, 26.4]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 30.789999999999996,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(28.6, 38.2]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 34.45322580645161,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(26.4, 28.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 33.06617647058823,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(14.999, 22.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 29.552542372881355,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "value": "(178.0, 634.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 22.47173144876325,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(48.0, 83.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "hypertension_history",
+                            "children": [
+                                {
+                                    "value": "(22.5, 24.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 29.230882352941173,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(24.6, 26.4]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 30.04153846153846,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(28.6, 38.2]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 32.78641975308642,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(26.4, 28.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 30.140579710144927,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(14.999, 22.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 25.336538461538456,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "value": "(63.0, 90.0]",
+            "next": {
+                "type": "decision",
+                "feature": "alcohol_consumption_per_week",
+                "children": [
+                    {
+                        "value": "(83.0, 120.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "heart_rate",
+                            "children": [
+                                {
+                                    "value": "(51.0, 57.0]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 36.39076923076924,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(63.0, 96.0]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 34.864000000000004,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(19.999, 45.0]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 40.107017543859655,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(45.0, 51.0]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 35.440350877192984,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(57.0, 63.0]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 35.86538461538461,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "value": "(120.0, 178.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 35.38039215686275,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(-0.001, 48.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 40.529310344827586,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(178.0, 634.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": "hypertension_history",
+                            "children": [
+                                {
+                                    "value": "(22.5, 24.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 29.724999999999998,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(24.6, 26.4]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 31.55396825396825,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(28.6, 38.2]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 35.36964285714286,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(26.4, 28.6]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 32.20399999999999,
+                                        "children": []
+                                    }
+                                },
+                                {
+                                    "value": "(14.999, 22.5]",
+                                    "next": {
+                                        "type": "decision",
+                                        "feature": 27.70151515151515,
+                                        "children": []
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "value": "(48.0, 83.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 38.66877323420075,
+                            "children": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "value": "(54.0, 63.0]",
+            "next": {
+                "type": "decision",
+                "feature": "alcohol_consumption_per_week",
+                "children": [
+                    {
+                        "value": "(120.0, 178.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 31.50466926070039,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(83.0, 120.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 33.11290322580645,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(-0.001, 48.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 36.96741573033708,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(178.0, 634.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 26.9772,
+                            "children": []
+                        }
+                    },
+                    {
+                        "value": "(48.0, 83.0]",
+                        "next": {
+                            "type": "decision",
+                            "feature": 34.84280442804429,
+                            "children": []
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

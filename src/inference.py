@@ -1,7 +1,10 @@
 import pandas as pd
 import itertools
+import os
+import json 
 from sklearn.metrics import mean_squared_error, root_mean_squared_error
 from etl import dict_to_node
+from node import Node
 
 class Engine():
 
@@ -9,14 +12,18 @@ class Engine():
         self.data= data 
         self.pnode= self._get_model()
 
-    def _get_model() -> Node:
-        with open("../results/decision_tree.json") as f:
+    def _get_model(self,) -> Node:
+
+        dirname = os.path.dirname(__file__)
+        model_path = os.path.join(dirname, '../results/decision_tree.json')
+
+        with open(model_path) as f:
             tree_dict= json.load(f)
 
         pnode= dict_to_node(tree_dict)
         return pnode
 
-    def _traverse(data: pd.Series, tree: Node) -> float:
+    def _traverse(self, data: pd.Series, tree: Node) -> float:
         # Leaf node
         if tree.childs is None and tree.next is None:
             return tree.value
@@ -24,18 +31,22 @@ class Engine():
         # Decision Node
         col= tree.value 
         value= data[col]
-        for child in node.childs: # Branch Node
+
+        for child in tree.childs: # Branch Node
             if child.value== value:
                 return self._traverse(data, child.next) # Next decision node
 
-    def _get_results() -> list[float]:
+        return tree.value
+
+    def _get_results(self) -> list[float]:
+        results: list[float]= []
         for _, row in self.data.iterrows():
             res= self._traverse(row, self.pnode)
             results.append(res)
         
         return results
 
-    def _validation(results: list[float]) -> Union(float, float, int):
+    def _validation(self, results: list[float]) -> tuple[float, float, int]:
         labels= self.data["diabetes_risk_score"].tolist()
         mse= mean_squared_error(labels, results)
         rmse= root_mean_squared_error(labels, results)
@@ -44,9 +55,9 @@ class Engine():
 
         return (mse, rmse, length)
 
-    def run() -> Union(float, float, int):
-        prediction= _get_results()
-        mse, rmse, length= _validation(prediction)
+    def run(self) -> tuple[float, float, int]:
+        prediction= self._get_results()
+        mse, rmse, length= self._validation(prediction)
 
         return (mse, rmse, length)
 

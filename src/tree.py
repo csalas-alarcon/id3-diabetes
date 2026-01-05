@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np 
 import typing
 import math
+import os 
+import json
 
-from dataWork import node_to_dict
+from etl import node_to_dict
 from node import Node
 
 # NOTA MENTAL -> Pasar a numpy f64 todos los decimales que pueda
@@ -22,6 +24,7 @@ class DecisionTree():
         self.data= np.array(database[FEATURE_COLS].copy()) # Where the features are
         self.results= np.array(database[LABEL_COLS].copy()) # Where the labels are
         self.length= np.shape(self.results)[0] # Initial Length
+        self.min_samples= 50
 
         # Node Declaration
         self.node= None
@@ -50,12 +53,12 @@ class DecisionTree():
         return sum([
             -count/ newlength* math.log(count/ newlength, 2)
             if count else 0
-            for count in newfrequency.values
+            for count in newfrequency.values()
         ])
 
 
     def _info_gain(self, indices: list[int], feature: int) -> float:
-        initial_entropy= _calculate_entropy(indices) # Calculate initial entropy with the given indices (total)
+        initial_entropy= self._calculate_entropy(indices) # Calculate initial entropy with the given indices (total)
         data= self.data[indices] # We filter by the indices
 
         # Get Patterns
@@ -68,14 +71,16 @@ class DecisionTree():
             for value, value_freq in feature_frequencies.items()
         ])
 
-    def _get_max_info(self, indices: list[int], features: list[int]) -> Union(str, int):
+    def _get_max_info(self, indices: list[int], features: list[int]) -> tuple[str, int]:
+        print(f"I GET: {features}")
         # We calculate the gain-per-feature
         gain_per_feature= [self._info_gain(indices, feature_col) for feature_col in features]
 
         # We get which is the maximum
         max_feature = gain_per_feature.index(max(gain_per_feature))
+        best_col= features[max_feature]
 
-        return (FEATURE_DICT[max_feature], max_feature)
+        return (FEATURE_DICT[max_feature], best_col)
 
     def _entrenamiento(self, indices: list[int], features: list[int], node: Node) -> Node:
         # Create indices if not passed as an argument
@@ -103,6 +108,7 @@ class DecisionTree():
         best_name, best_col= self._get_max_info(indices, features)
         node.value= best_name
         node.childs= []
+        print(f"BEST ONE IS {best_name} with bestcol: {best_col}")
 
         # We get the unique values of that feature
         feature_values = list(set(
@@ -131,12 +137,11 @@ class DecisionTree():
             # We create a "Normal Decision Node"
             else:
                 # Remove the chosen feature
-                if features and best_col in features:
-                    myfeatures= features.copy()
-                    to_remove = myfeatures.index(best_col)
-                    myfeatures.pop(to_remove)
+                myfeatures= features.copy()
+                to_remove = myfeatures.index(best_col)
+                myfeatures.pop(to_remove)
                 # recursively call the algorithm to train it
-                child.next = self.entrenamiento(childs_indices, myfeatures, child.next)
+                child.next = self._entrenamiento(childs_indices, myfeatures, child.next)
         return node
     
     def run(self):
@@ -145,12 +150,16 @@ class DecisionTree():
         :return: None
         """
         # We train it
-        self.node = self.entrenamiento(None, list(FEATURE_DICT.keys()), self.node)
+        self.node = self._entrenamiento(None, list(FEATURE_DICT), self.node)
         # We make it a Dictionary
         tree_dict= node_to_dict(self.node)
         # Convert it to JSON
-        with open("../results/decision_tree.json", w) as f:
-            json.dump(tree_dict, f, indent=2)
+
+        dirname = os.path.dirname(__file__)
+        json_path = os.path.join(dirname, "../results/decision_tree.json")
+
+        with open(json_path, "w") as f:
+            json.dump(tree_dict, f, indent=4)
 
 class DecisionTreePruning(DecisionTree):
 
@@ -173,6 +182,8 @@ class DecisionTreePruning(DecisionTree):
         best_name, best_col= self._get_max_info(indices, features)
         node.value= best_name
         node.childs= []
+        print(f"BEST ONE IS {best_name} with bestcol: {best_col}")
+
 
         # We get the unique values of that feature
         feature_values = set(self.data[i][best_col] for i in indices)
@@ -186,6 +197,8 @@ class DecisionTreePruning(DecisionTree):
             if len(child_indices) < self.min_samples:
                 # No se permite la división
                 node.value = np.mean(newresults.astype(np.float64))
+                node.childs = None
+                node.next = None
 
                 return node
 
@@ -204,12 +217,15 @@ class DecisionTreePruning(DecisionTree):
             
             # We create a "Normal Decision Node"
             # Remove the chosen feature
-            if features and best_col in features:
-                myfeatures= features.copy()
-                to_remove = myfeatures.index(best_col)
-                myfeatures.pop(to_remove)
+            print(f"DENTRO DEL BUCLE ES: {best_col}")
+            print(features)
+            print(value)
+            print("-----")
+            myfeatures= features.copy()
+            to_remove = myfeatures.index(best_col)
+            myfeatures.pop(to_remove)
             # recursively call the algorithm to train it
-            child.next = self.entrenamiento(childs_indices, myfeatures, child.next)
+            child.next = self._entrenamiento(childs_indices, myfeatures, child.next)
         return node
 
 

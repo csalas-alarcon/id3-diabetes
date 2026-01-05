@@ -1,9 +1,7 @@
-from dataWork import leer, escribir
-from decisionTree import DecisionTree
-
 from etl import load, categorize
 from tree import DecisionTree, DecisionTreePruning
 from inference import Engine
+from math import trunc
 
 SIZE= 100000
 
@@ -19,6 +17,7 @@ def main():
             percent= float(input())
             if percent not in [0.0, 1.0]:
                 print("VALOR VÁLIDO: PORCENTAJE")
+                break
 
         except ValueError:
             print("ERROR: Parece que has metido el número mal,\n Por favor escribe el número con este formato: 0.384\nGracias.")
@@ -29,6 +28,7 @@ def main():
             kind = str(input())
             if kind not in ["A", "B"]:
                 print("VALOR VÁLIDO: TIPO")
+                break
         
         except Exception:
             print("ERROR: Parece que lo escrito no corresponde a ninguna de las opciones.\nPor favor, escriba una sola letra mayúscula A o B sin espacios.\nGracias.")
@@ -44,10 +44,10 @@ def main():
     # Preprocessing
     n_rows= trunc(SIZE* percent)
     # Read it and Load it
-    training, validation= load()
+    training, validation= load(n_rows)
     # We categorize continous Property
     training= categorize(training)
-    validation= categorize(training)
+    validation= categorize(validation)
     # We instance the Decision Tree
     model= DecisionTree(training) if kind=='A' else DecisionTreePruning(training)
     # We train it and store the model
