@@ -8,5 +8,3 @@
 
 ID3 -> Iterative Dichotomiser 3
 Decision Tree Learning Algorithm for Classification
-
-X Is the Dataset
