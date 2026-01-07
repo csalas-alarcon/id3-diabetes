@@ -1,4 +1,4 @@
-# Node
+# 1.0 Node Class
 class Node():
     def __init__(self):
         self.value: str | float = None

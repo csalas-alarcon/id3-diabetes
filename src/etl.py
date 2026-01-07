@@ -1,63 +1,49 @@
+# 1.0 Generic Modules
 import pandas as pd
 import os
-
+from math import trunc
+# 1.1 My Modules
 from node import Node
- 
+
+# 2.0 Constants
 FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","employment_status","smoking_status","alcohol_consumption_per_week","physical_activity_minutes_per_week","diet_score","sleep_hours_per_day","screen_time_hours_per_day","family_history_diabetes","hypertension_history","cardiovascular_history","bmi","waist_to_hip_ratio","systolic_bp","diastolic_bp","heart_rate","cholesterol_total","hdl_cholesterol","ldl_cholesterol","triglycerides","glucose_fasting","glucose_postprandial","insulin_level","hba1c"]
-
-
-CONTINUOUS_COLS = [
-    "age",
-    "alcohol_consumption_per_week",
-    "physical_activity_minutes_per_week",
-    "diet_score",
-    "sleep_hours_per_day",
-    "screen_time_hours_per_day",
-    "bmi",
-    "waist_to_hip_ratio",
-    "systolic_bp",
-    "diastolic_bp",
-    "heart_rate",
-    "cholesterol_total",
-    "hdl_cholesterol",
-    "ldl_cholesterol",
-    "triglycerides",
-    "glucose_fasting",
-    "glucose_postprandial",
-    "insulin_level",
-    "hba1c"
-]
-
+CONTINUOUS_COLS = ["age", "alcohol_consumption_per_week", "physical_activity_minutes_per_week", "diet_score", "sleep_hours_per_day", "screen_time_hours_per_day", "bmi", "waist_to_hip_ratio", "systolic_bp", "diastolic_bp", "heart_rate", "cholesterol_total", "hdl_cholesterol", "ldl_cholesterol", "triglycerides", "glucose_fasting", "glucose_postprandial", "insulin_level", "hba1c"]
 SIZE= 100000
 
-# Load the model
-def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+# 3.0 Normalization Auxiliar Function
+def normalize(value, min_val, max_val) -> float:
+    return (value - min_val) / (max_val - min_val)
 
+# 3.1 Categorization of Continious Features Auxiliar Function
+def categorize(value, min_val, max_val):
+    # We normalize each value
+    norm = normalize(value, min_val, max_val)
+    # Avoid 0 and 1
+    norm = min(max(norm, 0), 0.9999)
+    # We assign it a category
+    cat_index = trunc(norm * 10)
+    return cat_index 
+
+# 3.2 Loading Function
+def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    # Read DB from Relative PATH
     dirname = os.path.dirname(__file__)
     file = os.path.join(dirname, '../data/diabetes.csv')
-
     df= pd.read_csv(file)
 
+    # We categorize continous values
     for col in CONTINUOUS_COLS:
         min_val = df[col].min()
         max_val = df[col].max()
         df[col] = df[col].apply(lambda x: categorize(x, min_val, max_val))
 
+    # We separate between training and validation
     training= df.iloc[:n_rows]
     validation= df.iloc[n_rows:]
 
     return (training, validation)
 
-def normalize(value, min_val, max_val) -> float:
-    return (value - min_val) / (max_val - min_val)
-
-def categorize(value, min_val, max_val):
-    norm = normalize(value, min_val, max_val)
-    # Clip to avoid rounding issues
-    norm = min(max(norm, 0), 0.9999)
-    bin_index = int(norm * 10)
-    return bin_index  # returns 0..9
-
+# 4.1 Conversion Function to SAVE
 def node_to_dict(node: Node) -> dict:
     if node is None:
         return None
@@ -85,12 +71,10 @@ def node_to_dict(node: Node) -> dict:
             "value": node.value,
             "next": node_to_dict(node.next)
         }
-    
-    else:
-        print("GRAVÍSIMO ERROR; NO ENTRO EN NINGUNA CATEGORIA NODE TO DICT")
 
+# 4.2 Conversion Function to LOAD
 def dict_to_node(d: dict) -> Node:
-    # instance a Node
+    # Instance a Node
     n= Node()
 
     if d["type"]== "leaf":
@@ -106,8 +90,4 @@ def dict_to_node(d: dict) -> Node:
         n.value= d["value"]
         n.next= dict_to_node(d["next"])
         return n 
-
-    else:
-        print("GRAVÍSIMO ERROR; NO ENTRO EN NINGUNA CATEGORIA DICTO_TO_NODE")
-
 
