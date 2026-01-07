@@ -1,17 +1,25 @@
-from etl import load, categorize
+# 1.0 Generic Modules
+from math import trunc
+# 1.1 My Modules
+from etl import load
 from tree import DecisionTree, DecisionTreePruning
 from inference import Engine
-from math import trunc
 
+
+# 2.0 Constants
 SIZE= 100000
 
+# 3.0 Main Function
 def main():
+    # 3.1 Initial Prints
     # Only this part will be in Spanish -><-
     print("Hola muy Buenas, Soy Carlos y este es el árbol de decision ID3 que he hecho.")
     print("Siempre trabajamos con la misma base de datos pero cambia: ")
     print(" - Con que porcentaje entrenamos y con cual validamos")
     print(" - Si queremos usar un ID3 puro o un ID3 con prepoda.")
     print("\nPor favor, escriba un número decimal entre el 0 y el 1 que represente el porcentaje\n de la base de datos que vamos a usar para entrenar el árbol:")
+    
+    # 3.2 Inputs
     while True:
         try:
             percent= float(input())
@@ -33,6 +41,7 @@ def main():
         except Exception:
             print("ERROR: Parece que lo escrito no corresponde a ninguna de las opciones.\nPor favor, escriba una sola letra mayúscula A o B sin espacios.\nGracias.")
 
+    # 3.3 Post Selection Prints
     print("TODO LISTO: Ya podemos empezar con el proceso de entrenamiento. Los pasos que se van a seguir son: ")
     print("\n\t- Se leera el archivo diabetes.csv en un DataFrame de la librería Pandas")
     print("\n\t- Se seleccionará el porcentaje de información que usted ha especificado.")
@@ -41,13 +50,11 @@ def main():
     print("\n\t- Después se cargará el modelo y se hará inferencia para las filas que se\n\tguardaron para validar el modelo.")
     print("\n\t- Por último se imprimiran las métricas MSE (Mean Squared Error) y \n\tRMSE (Root MSE) demostrando como de bien se entrenó el modelo")
 
+    # 4.0 Main Function
     # Preprocessing
     n_rows= trunc(SIZE* percent)
-    # Read it and Load it
+    # Read it and Load it (and Categorize it)
     training, validation= load(n_rows)
-    # We categorize continous Property
-    #training= categorize(training)
-    #validation= categorize(validation)
     # We instance the Decision Tree
     model= DecisionTree(training) if kind=='A' else DecisionTreePruning(training)
     # We train it and store the model
@@ -57,8 +64,7 @@ def main():
     # We Inference the Results and get the precision of the model
     mse, rmse, length= engine.run()
     # Ta Chaaan! Here you have it ; )
-    print(f"MSE: {mse}, RMSE: {rmse}, len: {len}")
-
+    print(f"MSE: {mse}, RMSE: {rmse}, len: {length}")
 
 if __name__=='__main__':
     main()

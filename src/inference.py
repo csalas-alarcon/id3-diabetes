@@ -1,5 +1,6 @@
 import pandas as pd
 import itertools
+import random
 import os
 import json 
 from sklearn.metrics import mean_squared_error, root_mean_squared_error
@@ -26,14 +27,7 @@ class Engine():
         return pnode
 
     def _traverse(self, data: pd.Series, tree: Node) -> float:
-        print("=== DATA TRACE ===")
-        print(f"data.index: {list(data.index)}")
-        print(f"data.values: {list(data.values)}")
-        print(f"tree.value: {tree.value}")
-        print("==================")
-
         # If it only has value -> Leaf
-        print(f"NODE: {tree}. VALUE: {tree.value}, NEXT: {tree.next}, CHILDREN: {[child.value for child in tree.childs] if tree.childs else 0}")
         if tree.childs is None and tree.next is None:
             return tree.value
         
@@ -52,7 +46,6 @@ class Engine():
 
         else:
             return 30.0
-            print("GRAVÍSIMO ERROR; NO ENTRO EN NINGUNA CATEGORIA TRAVERSE")
 
     def _get_results(self) -> list[float]:
         results: list[float]= []
@@ -63,14 +56,8 @@ class Engine():
         return results
 
     def _validation(self, results: list[float]) -> tuple[float, float, int]:
-        print("__________________________________")
-        print("EPPEPEPEPEPEPEPEPEPEPEPPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEPPPPPP")
-        print(results.count('None'))
-        print(results)
-        print("-------------------------")
-        print(sum(x is not None for x in results))
-        print(len(results))
-        labels= self.data["diabetes_risk_score"].tolist()
+
+        labels= self.data["diabetes_stage"].tolist()
         mse= mean_squared_error(labels, results)
         rmse= root_mean_squared_error(labels, results)
 

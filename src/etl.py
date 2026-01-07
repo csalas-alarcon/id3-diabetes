@@ -59,7 +59,6 @@ def categorize(value, min_val, max_val):
     bin_index = int(norm * 10)
     return bin_index  # returns 0..9
 
-
 def node_to_dict(node: Node) -> dict:
     if node is None:
         return None
