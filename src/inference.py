@@ -1,5 +1,4 @@
 import pandas as pd
-import itertools
 import random
 import os
 import json 
@@ -56,7 +55,6 @@ class Engine():
         return results
 
     def _validation(self, results: list[float]) -> tuple[float, float, int]:
-
         labels= self.data["diabetes_stage"].tolist()
         mse= mean_squared_error(labels, results)
         rmse= root_mean_squared_error(labels, results)
