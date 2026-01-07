@@ -11,9 +11,10 @@ from node import Node
 # 2.0 Constants
 LABEL_MAP = {
     "No Diabetes": 0,
-    "Pre Diabetes": 1,
+    "Pre-Diabetes": 1,
     "Type 1": 2,
-    "Type 2": 3
+    "Type 2": 3,
+    "Gestational": 4
 }
 
 # 3.0 Inference Engine Class

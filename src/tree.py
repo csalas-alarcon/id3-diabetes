@@ -198,10 +198,9 @@ class DecisionTreePruning(DecisionTree):
 
             # If there are too few examples, Convert into leaf Node
             if len(child_indices) < self.min_samples:
-                values, counts = np.unique(newresults[child_indices], return_counts=True)
-                child.value = values[np.argmax(counts)]
-                child.childs = None
-                child.next = None
+                values, counts = np.unique(self.results[child_indices], return_counts=True)
+                child.next = Node()
+                child.next.value = values[np.argmax(counts)]
 
                 return node
             
