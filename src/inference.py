@@ -60,7 +60,7 @@ class Engine():
 
         # As a Last Resort
         else:
-            return "No Diabetes"
+            return "Gestational"
 
     # 4.1 Result generator Auxiliar Function
     def _get_results(self) -> list[float]:

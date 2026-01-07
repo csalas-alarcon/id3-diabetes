@@ -22,7 +22,7 @@ class DecisionTree():
         self.data= np.array(database[FEATURE_COLS].copy()) # Where the features are
         self.results= np.array(database[LABEL_COLS].copy()) # Where the labels are
         self.length= np.shape(self.results)[0] # Initial Length
-        self.min_samples= 10 # Minimum Instances per Child in Pre-Pruning Version
+        self.min_samples= 1 # Minimum Instances per Child in Pre-Pruning Version
         
         self.node= None # Father Node Variable
 
@@ -202,7 +202,6 @@ class DecisionTreePruning(DecisionTree):
                 child.next = Node()
                 child.next.value = values[np.argmax(counts)]
 
-                return node
             
             else:
                 # We create a "Normal Decision Node"
@@ -213,7 +212,7 @@ class DecisionTreePruning(DecisionTree):
                 # recursively call the algorithm to train it
                 child.next = self._training(child_indices, myfeatures, child.next)
 
-                return node
+        return node
             
        
 
