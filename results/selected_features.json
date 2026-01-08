@@ -1,0 +1,12 @@
+[
+    "age",
+    "physical_activity_minutes_per_week",
+    "family_history_diabetes",
+    "systolic_bp",
+    "triglycerides",
+    "glucose_fasting",
+    "glucose_postprandial",
+    "hba1c",
+    "diabetes_risk_score",
+    "diagnosed_diabetes"
+]

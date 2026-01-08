@@ -1,3 +1,4 @@
+# src/tree.py
 # 1.0 Generic Modules
 import pandas as pd 
 import numpy as np 
@@ -11,27 +12,18 @@ from node import Node
 # 2. Constants
 #FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","employment_status","smoking_status","alcohol_consumption_per_week","physical_activity_minutes_per_week","diet_score","sleep_hours_per_day","screen_time_hours_per_day","family_history_diabetes","hypertension_history","cardiovascular_history","bmi","waist_to_hip_ratio","systolic_bp","diastolic_bp","heart_rate","cholesterol_total","hdl_cholesterol","ldl_cholesterol","triglycerides","glucose_fasting","glucose_postprandial","insulin_level","hba1c"]
 
-FEATURE_COLS = [
-    "glucose_fasting", 
-    "hba1c", 
-    "bmi", 
-    "age", 
-    "insulin_level", 
-    "glucose_postprandial", 
-    "systolic_bp", 
-    "waist_to_hip_ratio"
-]
-FEATURE_DICT= dict(enumerate(FEATURE_COLS))
-LABEL_COLS= ["diabetes_stage"]
-
 # 3.0 Pure Decision Tree Class
 class DecisionTree():
 
     # 3.1 Constructor
-    def __init__(self, database: pd.DataFrame):
+    def __init__(self, database: pd.DataFrame, feature_list: list[str]):
         # Information
-        self.data= np.array(database[FEATURE_COLS].copy()) # Where the features are
-        self.results= np.array(database[LABEL_COLS].copy()) # Where the labels are
+        self.given_features= feature_list
+        self.feature_dict= dict(enumerate(self.given_features))
+        self.data= np.array(database[self.given_features].copy()) # Where the features are
+        self.results= np.array(database["diabetes_stage"].copy()) # Where the labels are
+        
+        
         self.length= np.shape(self.results)[0] # Initial Length
         self.min_samples= 1000 # Minimum Instances per Child in Pre-Pruning Version
         
@@ -88,7 +80,7 @@ class DecisionTree():
         max_feature = gain_per_feature.index(max(gain_per_feature))
         best_col= features[max_feature]
 
-        return (FEATURE_DICT[best_col], best_col)
+        return (self.feature_dict[best_col], best_col)
 
     # 5.0 Training of the Decision Tree
     def _training(self, indices: list[int], features: list[int], node: Node) -> Node:
@@ -148,7 +140,7 @@ class DecisionTree():
     # 6.0 The "Main" function
     def run(self):
         # We train it
-        self.node = self._training(None, list(FEATURE_DICT), self.node)
+        self.node = self._training(None, list(self.feature_dict), self.node)
         # We make it a Dictionary
         tree_dict= node_to_dict(self.node)
         # Convert it to JSON
