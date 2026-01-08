@@ -78,12 +78,22 @@ def analyze_and_save(k=10):
 
     # Prep for Chi-Square
     # We use all columns except the label
+    df = df.drop(columns=[col for col in ["diagnosed_diabetes", "diabetes_risk_score"] if col in df.columns])
+
     X_cols = [c for c in df.columns if c != "diabetes_stage"]
     X = df[X_cols]
     y = df["diabetes_stage"]
 
     selector = SelectKBest(score_func=chi2, k=k)
     selector.fit(X, y)
+
+    feature_scores = pd.DataFrame({
+        'Feature': X_cols,
+        'Score': selector.scores_
+    }).sort_values(by='Score', ascending=False)
+
+    print("\n--- FEATURE RANKING BY CHI-SQUARE ---")
+    print(feature_scores.head(20)) # Shows top 20 for perspective
     
     best_features = X.columns[selector.get_support()].tolist()
 
