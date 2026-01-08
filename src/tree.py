@@ -9,7 +9,18 @@ from etl import node_to_dict
 from node import Node
 
 # 2. Constants
-FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","employment_status","smoking_status","alcohol_consumption_per_week","physical_activity_minutes_per_week","diet_score","sleep_hours_per_day","screen_time_hours_per_day","family_history_diabetes","hypertension_history","cardiovascular_history","bmi","waist_to_hip_ratio","systolic_bp","diastolic_bp","heart_rate","cholesterol_total","hdl_cholesterol","ldl_cholesterol","triglycerides","glucose_fasting","glucose_postprandial","insulin_level","hba1c"]
+#FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","employment_status","smoking_status","alcohol_consumption_per_week","physical_activity_minutes_per_week","diet_score","sleep_hours_per_day","screen_time_hours_per_day","family_history_diabetes","hypertension_history","cardiovascular_history","bmi","waist_to_hip_ratio","systolic_bp","diastolic_bp","heart_rate","cholesterol_total","hdl_cholesterol","ldl_cholesterol","triglycerides","glucose_fasting","glucose_postprandial","insulin_level","hba1c"]
+
+FEATURE_COLS = [
+    "glucose_fasting", 
+    "hba1c", 
+    "bmi", 
+    "age", 
+    "insulin_level", 
+    "glucose_postprandial", 
+    "systolic_bp", 
+    "waist_to_hip_ratio"
+]
 FEATURE_DICT= dict(enumerate(FEATURE_COLS))
 LABEL_COLS= ["diabetes_stage"]
 
@@ -22,7 +33,7 @@ class DecisionTree():
         self.data= np.array(database[FEATURE_COLS].copy()) # Where the features are
         self.results= np.array(database[LABEL_COLS].copy()) # Where the labels are
         self.length= np.shape(self.results)[0] # Initial Length
-        self.min_samples= 1 # Minimum Instances per Child in Pre-Pruning Version
+        self.min_samples= 1000 # Minimum Instances per Child in Pre-Pruning Version
         
         self.node= None # Father Node Variable
 

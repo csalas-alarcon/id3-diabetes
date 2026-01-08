@@ -23,6 +23,9 @@ class Engine():
     def __init__(self, data: pd.DataFrame):
         self.data= data 
         self.pnode= self._get_model()
+        # Counters ->
+        self.choices= 0
+        self.resorts= 0
 
     # 3.2 Auxiliar Function to the Constructor
     def _get_model(self,) -> Node:
@@ -52,6 +55,7 @@ class Engine():
                     
             # If the tree hasn't been exposed to that value, we choose a random value
             except Exception: 
+                self.choices+= 1
                 return self._traverse(data, random.choice(tree.childs))
 
         # If it doesn't have childs -> Branch
@@ -60,6 +64,7 @@ class Engine():
 
         # As a Last Resort
         else:
+            self.resorts+= 1
             return "Gestational"
 
     # 4.1 Result generator Auxiliar Function
@@ -93,5 +98,5 @@ class Engine():
         prediction= self._get_results()
         report= self._validation(prediction)
 
-        return report
+        return (report, self.choices, self.resorts)
 

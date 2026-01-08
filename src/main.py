@@ -62,9 +62,11 @@ def main():
     # We load the model and instance the Inference Engine
     engine= Engine(validation)
     # We Inference the Results and get the precision of the model
-    report= engine.run()
+    report, blunders, desperates= engine.run()
     # Ta Chaaan! Here you have it ; )
     print(report)
+    print(f"Blunders: {blunders}")
+    print(f"Resorts: {desperates}")
 
 if __name__=='__main__':
     main()

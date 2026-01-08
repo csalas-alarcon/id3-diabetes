@@ -5,11 +5,14 @@ from math import trunc
 # 1.1 My Modules
 from node import Node
 
+from sklearn.preprocessing import KBinsDiscretizer
+
 # 2.0 Constants
 FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","employment_status","smoking_status","alcohol_consumption_per_week","physical_activity_minutes_per_week","diet_score","sleep_hours_per_day","screen_time_hours_per_day","family_history_diabetes","hypertension_history","cardiovascular_history","bmi","waist_to_hip_ratio","systolic_bp","diastolic_bp","heart_rate","cholesterol_total","hdl_cholesterol","ldl_cholesterol","triglycerides","glucose_fasting","glucose_postprandial","insulin_level","hba1c"]
 CONTINUOUS_COLS = ["age", "alcohol_consumption_per_week", "physical_activity_minutes_per_week", "diet_score", "sleep_hours_per_day", "screen_time_hours_per_day", "bmi", "waist_to_hip_ratio", "systolic_bp", "diastolic_bp", "heart_rate", "cholesterol_total", "hdl_cholesterol", "ldl_cholesterol", "triglycerides", "glucose_fasting", "glucose_postprandial", "insulin_level", "hba1c"]
 SIZE= 100000
 
+'''
 # 3.0 Normalization Auxiliar Function
 def normalize(value, min_val, max_val) -> float:
     return (value - min_val) / (max_val - min_val)
@@ -24,6 +27,8 @@ def categorize(value, min_val, max_val):
     cat_index = trunc(norm * 10)
     return cat_index 
 
+'''
+
 # 3.2 Loading Function
 def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
     # Read DB from Relative PATH
@@ -31,11 +36,15 @@ def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
     file = os.path.join(dirname, '../data/diabetes.csv')
     df= pd.read_csv(file)
 
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True)
+
     # We categorize continous values
-    for col in CONTINUOUS_COLS:
-        min_val = df[col].min()
-        max_val = df[col].max()
-        df[col] = df[col].apply(lambda x: categorize(x, min_val, max_val))
+    discretizer = KBinsDiscretizer(n_bins=5, encode='ordinal', strategy='kmeans')
+
+    
+    # 2. Fit and Transform the continuous columns
+    # We do this before splitting to ensure training and validation use the same scales
+    df[CONTINUOUS_COLS] = discretizer.fit_transform(df[CONTINUOUS_COLS])
 
     # We separate between training and validation
     training= df.iloc[:n_rows]
