@@ -13,24 +13,28 @@ CONTINUOUS_FEATURES = [
     "insulin_level", "hba1c"
 ]
 
-def find_analytical_bins(df, feature_name, max_bins=10):
+def find_analytical_bins(df, feature_name, max_bins=15):
     temp_df = df[[feature_name, "diabetes_stage"]].dropna().copy()
     
-    # Pre-split into 30 uniform bins so ID3 has "candidates" to pick from
+    # 1. Use Quantile strategy (splits data into 40 equal-sized groups)
     from sklearn.preprocessing import KBinsDiscretizer
-    kbd = KBinsDiscretizer(n_bins=30, encode='ordinal', strategy='uniform')
+    kbd = KBinsDiscretizer(n_bins=40, encode='ordinal', strategy='quantile')
     temp_df[feature_name] = kbd.fit_transform(temp_df[[feature_name]])
     
-    # Train 1D Tree to find best Entropy splits
-    tree_finder = DecisionTreePruning(temp_df, [feature_name])
-    tree_finder.min_samples = len(temp_df) // max_bins 
+    # 2. Use the PURE tree (no pruning) to find the best entropy splits
+    from tree import DecisionTree 
+    tree_finder = DecisionTree(temp_df, [feature_name])
+    
+    # 3. We train the tree
+    # It will split the 40 groups into the most 'informative' ones
     root = tree_finder._training(None, [0], None) 
     
     if root.childs:
+        # We take the values the tree chose as the 'smart' boundaries
         bin_indices = sorted([child.value for child in root.childs])
         edges = kbd.bin_edges_[0]
-        # Map back to real clinical numbers
         actual_thresholds = [edges[int(i)] for i in bin_indices if i < len(edges)]
+        
         # Add infinite bounds to prevent NaNs
         return [-float('inf')] + sorted(list(set(actual_thresholds))) + [float('inf')]
     return []
@@ -62,7 +66,7 @@ def binding():
     
     print(f"Successfully saved categorized data to {temp_path}")
 
-def analyze_and_save(k=10):
+def analyze_and_save(k=6):
     print(f"--- Running Feature Selection (Top {k}) ---")
     dirname = os.path.dirname(__file__)
     # Read the data we just created in 'binding'

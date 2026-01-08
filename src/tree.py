@@ -12,6 +12,16 @@ from node import Node
 # 2. Constants
 #FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","employment_status","smoking_status","alcohol_consumption_per_week","physical_activity_minutes_per_week","diet_score","sleep_hours_per_day","screen_time_hours_per_day","family_history_diabetes","hypertension_history","cardiovascular_history","bmi","waist_to_hip_ratio","systolic_bp","diastolic_bp","heart_rate","cholesterol_total","hdl_cholesterol","ldl_cholesterol","triglycerides","glucose_fasting","glucose_postprandial","insulin_level","hba1c"]
 
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)
+
 # 3.0 Pure Decision Tree Class
 class DecisionTree():
 
@@ -25,7 +35,7 @@ class DecisionTree():
         
         
         self.length= np.shape(self.results)[0] # Initial Length
-        self.min_samples= 1000 # Minimum Instances per Child in Pre-Pruning Version
+        self.min_samples= 50 # Minimum Instances per Child in Pre-Pruning Version
         
         self.node= None # Father Node Variable
 
@@ -148,7 +158,7 @@ class DecisionTree():
         json_path = os.path.join(dirname, "../results/decision_tree.json")
 
         with open(json_path, "w") as f:
-            json.dump(tree_dict, f, indent=4)
+            json.dump(tree_dict, f, indent=4, cls=NumpyEncoder)
 
 # 7.0 Pre-Pruning Decision Tree Class
 class DecisionTreePruning(DecisionTree):

@@ -12,6 +12,8 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Call your main program
+python src/analytical.py
+
 python src/main.py
 
 # Deactivate the virtual environment

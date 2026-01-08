@@ -1,6 +1,7 @@
 # 1.0 Generic Modules
 import pandas as pd
 import os
+import json
 from math import trunc
 # 1.1 My Modules
 from node import Node
@@ -33,24 +34,33 @@ def categorize(value, min_val, max_val):
 def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
     # Read DB from Relative PATH
     dirname = os.path.dirname(__file__)
-    file = os.path.join(dirname, '../data/diabetes.csv')
-    df= pd.read_csv(file)
+
+    with open(os.path.join(dirname, '../results/selected_features.json'), 'r') as f:
+        selected_features= json.load(f)
+    with open(os.path.join(dirname, '../results/bin_mapping.json'), 'r') as f:
+        bin_mapping= json.load(f)
+
+    df= pd.read_csv(os.path.join(dirname, '../data/diabetes.csv'))
 
     df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
     # We categorize continous values
-    discretizer = KBinsDiscretizer(n_bins=5, encode='ordinal', strategy='kmeans')
+    for col, boundaries in bin_mapping.items():
+        if col in selected_features:
+            df[col]= pd.cut(df[col], bins=boundaries, labels=False, include_lowest= True)
 
+    # Handle categoricals
+    for col in selected_features:
+        if df[col].dtype == 'object':
+            df[col] = df[col].astype('category').cat.codes 
     
-    # 2. Fit and Transform the continuous columns
-    # We do this before splitting to ensure training and validation use the same scales
-    df[CONTINUOUS_COLS] = discretizer.fit_transform(df[CONTINUOUS_COLS])
+    df_final = df[selected_features + ["diabetes_stage"]].dropna()
 
     # We separate between training and validation
-    training= df.iloc[:n_rows]
-    validation= df.iloc[n_rows:]
+    training= df_final.iloc[:n_rows]
+    validation= df_final.iloc[n_rows:]
 
-    return (training, validation)
+    return (training, validation, selected_features)
 
 # 4.1 Conversion Function to SAVE
 def node_to_dict(node: Node) -> dict:
