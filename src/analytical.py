@@ -1,9 +1,11 @@
+# 0.0 Generic Modules
 import os
 import json
 import pandas as pd
 import numpy as np
-from tree import DecisionTreePruning
 from sklearn.feature_selection import SelectKBest, chi2
+# 0.1 My Modules
+from tree import DecisionTreePruning
 
 # 1. Hardcoded Continuous Features
 CONTINUOUS_FEATURES = [
@@ -16,16 +18,15 @@ CONTINUOUS_FEATURES = [
 def find_analytical_bins(df, feature_name, max_bins=15):
     temp_df = df[[feature_name, "diabetes_stage"]].dropna().copy()
     
-    # 1. Quantile strategy is still best for the search space
+    # 1. Divide by Quantiles
     from sklearn.preprocessing import KBinsDiscretizer
     kbd = KBinsDiscretizer(n_bins=60, encode='ordinal', strategy='quantile')
     temp_df[feature_name] = kbd.fit_transform(temp_df[[feature_name]])
     
     # 2. Use PRUNING tree to find the bins
-    # This prevents the "30 bins" explosion
     tree_finder = DecisionTreePruning(temp_df, [feature_name])
     
-    # We set a threshold so it only keeps 'meaningful' bins
+    # Set a threshold to delete bad bins
     tree_finder.min_samples = 25 
     
     # 3. Train
@@ -53,7 +54,7 @@ def binding():
         bins = find_analytical_bins(df, col)
         if bins:
             bin_map[col] = bins
-            # Transform column to category codes (0, 1, 2...)
+            # Transform column to category codes 
             df[col] = pd.cut(df[col], bins=bins, labels=False, include_lowest=True)
     
     # Save the Categorized Data
@@ -61,7 +62,7 @@ def binding():
     os.makedirs(os.path.dirname(temp_path), exist_ok=True)
     df.to_csv(temp_path, index=False)
     
-    # Save the Map (So you can use it in Inference later)
+    # Save the Map (Just for Traces)
     with open(os.path.join(dirname, '../results/bin_mapping.json'), 'w') as f:
         json.dump(bin_map, f, indent=4)
     
@@ -70,7 +71,7 @@ def binding():
 def analyze_and_save(k=5):
     print(f"--- Running Feature Selection (Top {k}) ---")
     dirname = os.path.dirname(__file__)
-    # Read the data we just created in 'binding'
+    # Read the updated data
     df = pd.read_csv(os.path.join(dirname, '../temp/cat_diabetes.csv'))
 
     # Encode categorical strings (Gender, Ethnicity)
@@ -78,7 +79,7 @@ def analyze_and_save(k=5):
         if df[col].dtype == 'object' and col != "diabetes_stage":
             df[col] = df[col].astype('category').cat.codes
 
-    # Ensure no NaNs leaked through
+    # Ensure no NaNs 
     df = df.dropna()
 
     # Prep for Chi-Square
@@ -98,11 +99,11 @@ def analyze_and_save(k=5):
     }).sort_values(by='Score', ascending=False)
 
     print("\n--- FEATURE RANKING BY CHI-SQUARE ---")
-    print(feature_scores.head(20)) # Shows top 20 for perspective
+    print(feature_scores.head(28)) 
     
     best_features = X.columns[selector.get_support()].tolist()
 
-    # SAVE winners
+    # Save best ones
     with open(os.path.join(dirname, '../results/selected_features.json'), 'w') as f:
         json.dump(best_features, f, indent=4)
     

@@ -6,29 +6,11 @@ from math import trunc
 # 1.1 My Modules
 from node import Node
 
-from sklearn.preprocessing import KBinsDiscretizer
-
 # 2.0 Constants
 FEATURE_COLS= ["age","gender","ethnicity","education_level","income_level","employment_status","smoking_status","alcohol_consumption_per_week","physical_activity_minutes_per_week","diet_score","sleep_hours_per_day","screen_time_hours_per_day","family_history_diabetes","hypertension_history","cardiovascular_history","bmi","waist_to_hip_ratio","systolic_bp","diastolic_bp","heart_rate","cholesterol_total","hdl_cholesterol","ldl_cholesterol","triglycerides","glucose_fasting","glucose_postprandial","insulin_level","hba1c"]
 CONTINUOUS_COLS = ["age", "alcohol_consumption_per_week", "physical_activity_minutes_per_week", "diet_score", "sleep_hours_per_day", "screen_time_hours_per_day", "bmi", "waist_to_hip_ratio", "systolic_bp", "diastolic_bp", "heart_rate", "cholesterol_total", "hdl_cholesterol", "ldl_cholesterol", "triglycerides", "glucose_fasting", "glucose_postprandial", "insulin_level", "hba1c"]
 SIZE= 100000
 
-'''
-# 3.0 Normalization Auxiliar Function
-def normalize(value, min_val, max_val) -> float:
-    return (value - min_val) / (max_val - min_val)
-
-# 3.1 Categorization of Continious Features Auxiliar Function
-def categorize(value, min_val, max_val):
-    # We normalize each value
-    norm = normalize(value, min_val, max_val)
-    # Avoid 0 and 1
-    norm = min(max(norm, 0), 0.9999)
-    # We assign it a category
-    cat_index = trunc(norm * 10)
-    return cat_index 
-
-'''
 
 # 3.2 Loading Function
 def load(n_rows: int) -> tuple[pd.DataFrame, pd.DataFrame]:
